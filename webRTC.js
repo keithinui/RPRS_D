@@ -2,6 +2,7 @@
 var room;
 var peer;
 var youJoyned = 0;
+var timer;
 
 (async function main() {
   const localVideo = document.getElementById('js-local-stream');
@@ -66,6 +67,20 @@ var youJoyned = 0;
       messages.textContent += '=== You joined ===\n';
       joinTrigger.style = "background:#00F00F";
       youJoyned = 1;
+      
+      let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
+      timer = setInterval(async () => {
+        const stats = await existingCall.getPeerConnection().getStats();
+        // stats is [{},{},{},...]
+        stats.forEach((report) => {
+          // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
+          if(report.type == "inbound-rtp" && report.kind == "video") {
+            // When Fields is 'bytesReceived'
+            console.log(report.bytesReceived);   // Total recived data volume of the stream
+              bytesReceivedPrevious = report.bytesReceived;
+          }
+        });
+      },1000);
     });
     room.on('peerJoin', peerId => {
       messages.textContent += `=== ${peerId} joined ===\n`;
