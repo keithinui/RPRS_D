@@ -69,20 +69,6 @@ var timer;
       youJoyned = 1;
       console.log("Mode: " + roomMode.textContent);
       
-      let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
-      timer = setInterval(async () => {
-//        const stats = await room.getPeerConnection().getStats();
-        const ttats = await room._negotiator.getPeerConnections().getStas();
-        // stats is [{},{},{},...]
-        stats.forEach((report) => {
-          // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
-          if(report.type == "inbound-rtp" && report.kind == "video") {
-            // When Fields is 'bytesReceived'
-            console.log(report.bytesReceived);   // Total recived data volume of the stream
-              bytesReceivedPrevious = report.bytesReceived;
-          }
-        });
-      },1000);
     });
     room.on('peerJoin', peerId => {
       messages.textContent += `=== ${peerId} joined ===\n`;
@@ -97,7 +83,22 @@ var timer;
       newVideo.setAttribute('data-peer-id', stream.peerId);
       remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
+
+      GS(peerID);
+    
     });
+
+    function GS(peerId){
+      const pcs = room.getPeerConnections();
+      for ( [peerId, pc] of Object.entries(pcs) ) {
+        console.log(peerId, pc);
+        pc.getStats().then({
+          forEach(stat => console.log("Stats: " + stat));
+        });
+      }
+    }
+
+    
 
     room.on('data', ({ data, src }) => {
       if(applicationMode ==1){
