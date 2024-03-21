@@ -26,7 +26,6 @@ var timer;
   const getRoomModeByHash = () => (location.hash === '#sfu' ? 'sfu' : 'mesh');
 
   roomMode.textContent = getRoomModeByHash();
-  console.log("Mode: " + roomMode.textContent);
   window.addEventListener(
     'hashchange',
     () => (roomMode.textContent = getRoomModeByHash())
@@ -68,6 +67,7 @@ var timer;
       messages.textContent += '=== You joined ===\n';
       joinTrigger.style = "background:#00F00F";
       youJoyned = 1;
+      console.log("Mode: " + roomMode.textContent);
       
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
       timer = setInterval(async () => {
