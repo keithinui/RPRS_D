@@ -88,6 +88,8 @@ var timer;
         const pcs = room.getPeerConnections();
         for ( [peerId, pc] of Object.entries(pcs) ) {
           console.log(peerId, pc);
+          const stats = await pc.getStats();
+
         }
         
       },1000);
