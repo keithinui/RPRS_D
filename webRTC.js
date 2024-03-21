@@ -17,7 +17,6 @@ var timer;
   const meta = document.getElementById('js-meta');
   const sdkSrc = document.querySelector('script[src*=skyway]');
 
-
   meta.innerText = `
     UA: ${navigator.userAgent}
     SDK: ${sdkSrc ? sdkSrc.src : 'unknown'}
@@ -89,36 +88,38 @@ var timer;
       let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
       timer = setInterval(async () => {
         // Get peer connection followed by room mode
-        let stats;
         if(roomMode == 'mesh'){
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
-            stats = await pc.getStats();
+            getRTCStats(await pc.getStats());
           }
         } else if(roomMode == 'sfu'){
           const pc = room.getPeerConnection();
-          stats = await pc.getStats();
+            getRTCStats(await pc.getStats());
         }
 
-        // stats is [{},{},{},...]
-        let bufR;
-        let bufS;
-        stats.forEach((report) => {
-          // When RTCStatsType of report is 'inbound-rtp' or 'outbound-rtp' Object and kind is 'video'.
-          if(report.kind == "video") {
-            if(report.type == "inbound-rtp") {
-              bufR = (report.bytesReceived - bytesReceivedPrevious)*8/1024/1024;
-              bytesReceivedPrevious = report.bytesReceived; // Total recived volume of the stream
-            }
-            if(report.type == "outbound-rtp") {
-              bufS = (report.bytesSent - bytesSentPrevious)*8/1024/1024;
-              bytesSentPrevious = report.bytesSent; // Total sent volume of the stream
-            }
-          }
-        });
-        messages.textContent += `\rbytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
       },1000);
     });
+
+    function getRTCStats(stats) {
+      // stats is [{},{},{},...]
+      let bufR;
+      let bufS;
+      stats.forEach((report) => {
+        // When RTCStatsType of report is 'inbound-rtp' or 'outbound-rtp' Object and kind is 'video'.
+        if(report.kind == "video") {
+          if(report.type == "inbound-rtp") {
+            bufR = (report.bytesReceived - bytesReceivedPrevious)*8/1024/1024;
+            bytesReceivedPrevious = report.bytesReceived; // Total recived volume of the stream
+          }
+          if(report.type == "outbound-rtp") {
+            bufS = (report.bytesSent - bytesSentPrevious)*8/1024/1024;
+            bytesSentPrevious = report.bytesSent; // Total sent volume of the stream
+          }
+        }
+      });
+      messages.textContent += `\rbytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
+    }
     
     room.on('data', ({ data, src }) => {
       if(applicationMode ==1){
