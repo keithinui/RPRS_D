@@ -91,13 +91,14 @@ var timer;
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
             const stats = await pc.getStats();
-            getBytesReceived(stats);
+            bytesReceivedPrevious = getBytesRecived(stats) - bytesReceivedPrevious;
           }
         } else if(roomMode == 'sfu'){
           const pc = room.getPeerConnection();
           const stats = await pc.getStats();
-          getBytesRecived(stats);
+          bytesReceivedPrevious = getBytesRecived(stats) - bytesReceivedPrevious;
         }
+        console.log(report.bytesReceived);   
       },1000);
     });
     
@@ -106,9 +107,7 @@ var timer;
       stats.forEach((report) => {
         // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
         if(report.type == "inbound-rtp" && report.kind == "video") {
-          // When Fields is 'bytesReceived'
-          console.log(report.bytesReceived);   // Total recived data volume of the stream
-          bytesReceivedPrevious = report.bytesReceived;
+          return report.bytesReceived;   // Total recived data volume of the stream
         }
       });
     }
