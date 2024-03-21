@@ -119,6 +119,7 @@ var timer;
         }
       });
       messages.textContent += `\rbytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
+      console.log("bytesReceived[bps]: " + bufR + ", bytesSent[bps]: " + bufS);
     }
     
     room.on('data', ({ data, src }) => {
