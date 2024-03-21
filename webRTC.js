@@ -85,33 +85,41 @@ var timer;
       await newVideo.play().catch(console.error);
 
       // Get data volume by using getStats API
-      let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
+      let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
+      let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
+      let stats;
       timer = setInterval(async () => {
+        // Get peer connection followed by room mode
         if(roomMode == 'mesh'){
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
-            const stats = await pc.getStats();
-            bytesReceivedPrevious = getBytesRecived(stats) - bytesReceivedPrevious;
+            stats = await pc.getStats();
           }
         } else if(roomMode == 'sfu'){
           const pc = room.getPeerConnection();
-          const stats = await pc.getStats();
-          bytesReceivedPrevious = getBytesRecived(stats) - bytesReceivedPrevious;
+          stats = await pc.getStats();
         }
-        console.log(report.bytesReceived);   
+
+        // stats is [{},{},{},...]
+        let bufR;
+        let bufS;
+        stats.forEach((report) => {
+          // When RTCStatsType of report is 'inbound-rtp' or 'outbound-rtp' Object and kind is 'video'.
+          if(report.kind == "video") {
+            if(report.type == "inbound-rtp") {
+              bufR = (report.bytesReceived - bytesReceivedPrevious)*8/1024/1024;
+              bytesReceivedPrevious = report.bytesReceived; // Total recived volume of the stream
+            }
+            if(report.type == "outbound-rtp") {
+              bufS = (report.bytesSent - bytesSentPrevious)*8/1024/1024;
+              bytesSentPrevious = report.bytesSent; // Total sent volume of the stream
+            }
+          }
+        });
+        messages.textContent += `\rbytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
       },1000);
     });
     
-    function getBytesReceived(stats){
-      // stats is [{},{},{},...]
-      stats.forEach((report) => {
-        // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
-        if(report.type == "inbound-rtp" && report.kind == "video") {
-          return report.bytesReceived;   // Total recived data volume of the stream
-        }
-      });
-    }
-
     room.on('data', ({ data, src }) => {
       if(applicationMode ==1){
         // Doctor mode *********************************************
@@ -152,7 +160,6 @@ var timer;
       remoteVideo.remove();
 
       clearInterval(timer);    // Stop timer for getStats
-
       messages.textContent += `=== ${peerId} left ===\n`;
     });
 
