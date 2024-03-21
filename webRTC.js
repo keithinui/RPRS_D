@@ -89,7 +89,7 @@ var timer;
       let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
       timer = setInterval(async () => {
         // Get peer connection followed by room mode
-        const stats;
+        let stats;
         if(roomMode == 'mesh'){
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
