@@ -84,11 +84,22 @@ var timer;
       remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
 
+      let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
       timer = setInterval(async () => {
         const pcs = room.getPeerConnections();
         for ( [peerId, pc] of Object.entries(pcs) ) {
           console.log(peerId, pc);
           const stats = await pc.getStats();
+          // stats is [{},{},{},...]
+          stats.forEach((report) => {
+          // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
+            if(report.type == "inbound-rtp" && report.kind == "video") {
+              // When Fields is 'bytesReceived'
+              console.log(report.bytesReceived);   // Total recived data volume of the stream
+              bytesReceivedPrevious = report.bytesReceived;
+            }
+          });
+
 
         }
         
