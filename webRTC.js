@@ -26,6 +26,7 @@ var timer;
   const getRoomModeByHash = () => (location.hash === '#sfu' ? 'sfu' : 'mesh');
 
   roomMode.textContent = getRoomModeByHash();
+  console.log("Mode: " + roomMode.textContent);
   window.addEventListener(
     'hashchange',
     () => (roomMode.textContent = getRoomModeByHash())
