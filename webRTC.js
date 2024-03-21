@@ -100,17 +100,6 @@ var timer;
     
     });
 
-    function GS(peerId){
-      const pcs = room.getPeerConnections();
-      for ( [peerId, pc] of Object.entries(pcs) ) {
-        console.log(peerId, pc);
-        pc.getStats().then({
-          forEach(stat => console.log("Stats: " + stat));
-        });
-      }
-    }
-
-    
 
     room.on('data', ({ data, src }) => {
       if(applicationMode ==1){
