@@ -84,29 +84,34 @@ var timer;
       remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
 
+      // Get data volume by using getStats API
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
       timer = setInterval(async () => {
-        const pcs = room.getPeerConnections();
-        for ( [peerId, pc] of Object.entries(pcs) ) {
-          console.log(peerId, pc);
+        if(roomMode == 'mesh'){
+          const pcs = room.getPeerConnections();
+          for ( [peerId, pc] of Object.entries(pcs) ) {
+            const stats = await pc.getStats();
+            getBytesReceived(stats);
+          }
+        } else if(roomMode == 'sfu'){
+          const pc = room.getPeerConnection();
           const stats = await pc.getStats();
-          // stats is [{},{},{},...]
-          stats.forEach((report) => {
-          // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
-            if(report.type == "inbound-rtp" && report.kind == "video") {
-              // When Fields is 'bytesReceived'
-              console.log(report.bytesReceived);   // Total recived data volume of the stream
-              bytesReceivedPrevious = report.bytesReceived;
-            }
-          });
-
-
+          getBytesRecived(stats);
         }
-        
       },1000);
-    
     });
-
+    
+    function getBytesReceived(stats){
+      // stats is [{},{},{},...]
+      stats.forEach((report) => {
+        // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
+        if(report.type == "inbound-rtp" && report.kind == "video") {
+          // When Fields is 'bytesReceived'
+          console.log(report.bytesReceived);   // Total recived data volume of the stream
+          bytesReceivedPrevious = report.bytesReceived;
+        }
+      });
+    }
 
     room.on('data', ({ data, src }) => {
       if(applicationMode ==1){
