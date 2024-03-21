@@ -92,10 +92,12 @@ var timer;
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
             getRTCStats(await pc.getStats());
+            consol.log("mesh");
           }
         } else if(roomMode == 'sfu'){
           const pc = room.getPeerConnection();
             getRTCStats(await pc.getStats());
+          console.log("sfu");
         }
 
       },1000);
