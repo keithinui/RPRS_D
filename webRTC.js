@@ -87,9 +87,9 @@ var timer;
       // Get data volume by using getStats API
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
       let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
-      let stats;
       timer = setInterval(async () => {
         // Get peer connection followed by room mode
+        const stats;
         if(roomMode == 'mesh'){
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
