@@ -72,7 +72,7 @@ var timer;
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived 
       timer = setInterval(async () => {
 //        const stats = await room.getPeerConnection().getStats();
-        const ttats = await room._negotiator.getPeerConnection().getStas();
+        const ttats = await room._negotiator.getPeerConnections().getStas();
         // stats is [{},{},{},...]
         stats.forEach((report) => {
           // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
