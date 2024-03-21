@@ -84,7 +84,19 @@ var timer;
       remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
 
-      GS(peerID);
+      timer = setInterval(async () => {
+//        const stats = await room.getPeerConnection().getStats();
+        const stats = await getStas(stream.peerID);
+        // stats is [{},{},{},...]
+        stats.forEach((report) => {
+          // When RTCStatsType of report is `inbount-rtp` Object and kind is 'video'.
+          if(report.type == "inbound-rtp" && report.kind == "video") {
+            // When Fields is 'bytesReceived'
+            console.log(report.bytesReceived);   // Total recived data volume of the stream
+              bytesReceivedPrevious = report.bytesReceived;
+          }
+        });
+      },1000);
     
     });
 
@@ -138,6 +150,8 @@ var timer;
       remoteVideo.srcObject.getTracks().forEach(track => track.stop());
       remoteVideo.srcObject = null;
       remoteVideo.remove();
+
+      clearInterval(timer);    // Stop timer for getStats
 
       messages.textContent += `=== ${peerId} left ===\n`;
     });
