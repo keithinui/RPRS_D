@@ -2,7 +2,7 @@
 var room;
 var peer;
 var youJoyned = 0;
-var timer;
+let timerStats;
 
 (async function main() {
   const localVideo = document.getElementById('js-local-stream');
@@ -84,9 +84,10 @@ var timer;
       await newVideo.play().catch(console.error);
 
       // Get data volume by using getStats API
+      console.log("timerStats started!!");
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
       let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
-      timer = setInterval(async () => {
+      timerStats = setInterval(async () => {
         // Get peer connection followed by room mode
         if(roomMode == 'mesh'){
           const pcs = room.getPeerConnections();
@@ -163,7 +164,7 @@ var timer;
       remoteVideo.srcObject = null;
       remoteVideo.remove();
 
-      clearInterval(timer);    // Stop timer for getStats
+      clearInterval(timerStats);    // Stop timer for getStats
       messages.textContent += `=== ${peerId} left ===\n`;
     });
 
