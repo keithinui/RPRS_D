@@ -99,15 +99,16 @@ let msg = "";
           }
         } else if(roomMode.textContext == "sfu"){
           const pc = room.getPeerConnection();
-            getRTCStats(await pc.getStats());
+          getRTCStats(await pc.getStats());
         }
       },1000);
     });
 
+    // Get bytesReceived and bytesSent from stats
     function getRTCStats(stats) {
-      // stats is [{},{},{},...]
       let bufR;
       let bufS;
+      // stats is [{},{},{},...]
       stats.forEach((report) => {
         // When RTCStatsType of report is 'inbound-rtp' or 'outbound-rtp' Object and kind is 'video'.
         if(report.kind == "video") {
@@ -213,8 +214,6 @@ let msg = "";
       tmpData[4] = 0;  // Reserved
       room.send(tmpData);
     }
-
-
   });
 
   peer.on('error', console.error);
