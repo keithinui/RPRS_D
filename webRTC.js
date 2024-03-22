@@ -3,6 +3,7 @@ var room;
 var peer;
 var youJoyned = 0;
 let timerStats;
+let msg = "";
 
 (async function main() {
   const localVideo = document.getElementById('js-local-stream');
@@ -63,14 +64,16 @@ let timerStats;
     });
 
     room.once('open', () => {
-      messages.textContent += '=== You joined ===\n';
+      msg = '=== You joined ===\n';
+      messages.textContent = msg;
       joinTrigger.style = "background:#00F00F";
       youJoyned = 1;
       console.log("Mode: " + roomMode.textContent);
       
     });
     room.on('peerJoin', peerId => {
-      messages.textContent += `=== ${peerId} joined ===\n`;
+      msg += `=== ${peerId} joined ===\n`;
+      messages.textContent = msg;
     });
 
     let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
@@ -118,7 +121,7 @@ let timerStats;
           }
         }
       });
-      messages.textContent += `\rbytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
+      messages.textContent = msg + `bytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
       console.log("bytesReceived[bps]: " + bufR + ", bytesSent[bps]: " + bufS);
     }
     
@@ -162,12 +165,14 @@ let timerStats;
       remoteVideo.remove();
 
       clearInterval(timerStats);    // Stop timer for getStats
-      messages.textContent += `=== ${peerId} left ===\n`;
+      msg += `=== ${peerId} left ===\n`;
+      messages.textContent = msg;
     });
 
     // for closing myself
     room.once('close', () => {
-      messages.textContent += '== You left ===\n';
+      msg += '== You left ===\n';
+      messages.textContent msg; 
       joinTrigger.style = "background:''";
       youJoyned = 0;
       Array.from(remoteVideos.children).forEach(remoteVideo => {
