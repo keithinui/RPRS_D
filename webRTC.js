@@ -122,8 +122,7 @@ let msg = "";
           }
         }
       });
-      messages.textContent = msg + `bytesReceived[bps]=${bufR}, bytesSent[bps]=${bufS}\n`;
-      console.log("bytesReceived[bps]: " + bufR + ", bytesSent[bps]: " + bufS);
+      messages.textContent = msg + `Received[bps]=${bufR.toFixed(2)}, Sent[bps]=${bufS.toFixed(2)}\n`;
     }
     
     room.on('data', ({ data, src }) => {
