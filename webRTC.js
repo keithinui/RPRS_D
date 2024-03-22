@@ -173,7 +173,7 @@ let msg = "";
     // for closing myself
     room.once('close', () => {
       msg += '== You left ===\n';
-      messages.textContent msg; 
+      messages.textContent = msg; 
       joinTrigger.style = "background:''";
       youJoyned = 0;
       Array.from(remoteVideos.children).forEach(remoteVideo => {
