@@ -87,20 +87,16 @@ let timerStats;
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
       let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
       timerStats = setInterval(async () => {
-        console.log("timerStats now!!");
         // Get peer connection followed by room mode
-        if(roomMode == 'mesh'){
+        if(roomMode.textContent == "mesh"){
           const pcs = room.getPeerConnections();
           for ( [peerId, pc] of Object.entries(pcs) ) {
             getRTCStats(await pc.getStats());
-            consol.log("mesh");
           }
-        } else if(roomMode == 'sfu'){
+        } else if(roomMode.textContext == "sfu"){
           const pc = room.getPeerConnection();
             getRTCStats(await pc.getStats());
-          console.log("sfu");
         }
-
       },1000);
     });
 
