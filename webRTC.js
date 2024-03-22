@@ -73,6 +73,9 @@ let timerStats;
       messages.textContent += `=== ${peerId} joined ===\n`;
     });
 
+    let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
+    let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
+
     // Render remote stream for new peer join in the room
     room.on('stream', async stream => {
       const newVideo = document.createElement('video');
@@ -84,8 +87,6 @@ let timerStats;
       await newVideo.play().catch(console.error);
 
       // Get data volume by using getStats API
-      let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
-      let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
       timerStats = setInterval(async () => {
         // Get peer connection followed by room mode
         if(roomMode.textContent == "mesh"){
