@@ -84,10 +84,10 @@ let timerStats;
       await newVideo.play().catch(console.error);
 
       // Get data volume by using getStats API
-      console.log("timerStats started!!");
       let bytesReceivedPrevious = 0;     // Previous sample data of bytesReceived
       let bytesSentPrevious = 0;         // Previous sample data of bytesSent 
       timerStats = setInterval(async () => {
+        console.log("timerStats now!!");
         // Get peer connection followed by room mode
         if(roomMode == 'mesh'){
           const pcs = room.getPeerConnections();
